@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Blocked Videos Log</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+                background-color: #f0f0f0;
+                min-width: 200px;
+                min-height: 300px;
+                width: 400px;
+                height: 500px;
+                resize: both;
+                
+            }
+            
+            #container {
+                height: calc(100% - 100px); /* Account for header and button */
+                overflow-y: auto;
+                scrollbar-width: none; /* Firefox */
+                -ms-overflow-style: none;  /* IE and Edge */
+            }
+            
+            #container::-webkit-scrollbar {
+                display: none; /* Chrome, Safari and Opera */
+            }
+            
+            #blocked-videos-list {
+                height: 100%;
+            }
+            
+            .blocked-video {
+                background: white;
+                padding: 10px;
+                margin: 10px 0;
+                border-radius: 5px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                word-wrap: break-word;
+            }
+            .blocked-video .title {
+                color: #c00;
+                font-weight: bold;
+            }
+            .blocked-video .reason {
+                color: #666;
+                font-size: 0.9em;
+                margin-top: 5px;
+            }
+            .timestamp {
+                color: #888;
+                font-size: 0.8em;
+                margin-top: 5px;
+            }
+            #clearLogs {
+                background-color: #ff4444;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                cursor: pointer;
+                margin-bottom: 16px;
+            }
+            #clearLogs:hover {
+                background-color: #ff0000;
+            }
+            .modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.5);
+                z-index: 1000;
+            }
+            
+            .modal-content {
+                background-color: white;
+                margin: 15% auto;
+                padding: 20px;
+                border-radius: 5px;
+                width: 80%;
+                text-align: center;
+            }
+            
+            .modal-buttons {
+                margin-top: 20px;
+            }
+            
+            .modal-buttons button {
+                margin: 0 10px;
+                padding: 5px 15px;
+                border-radius: 4px;
+                border: none;
+                cursor: pointer;
+            }
+            
+            .confirm-btn {
+                background-color: #ff4444;
+                color: white;
+            }
+            
+            .cancel-btn {
+                background-color: #666;
+                color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Blocked Videos Log</h1>
+        <button id="clearLogs">Clear All Logs</button>
+        <div id="container">
+            <div id="blocked-videos-list">
+                <!-- Blocked videos will be displayed here -->
+            </div>
+        </div>
+        
+        <!-- Confirmation Modal -->
+        <div id="confirmModal" class="modal">
+            <div class="modal-content">
+                <h2>Clear Logs</h2>
+                <p>Are you sure you want to clear all blocked video logs?</p>
+                <div class="modal-buttons">
+                    <button class="confirm-btn" id="confirmClear">Yes, Clear All</button>
+                    <button class="cancel-btn" id="cancelClear">Cancel</button>
+                </div>
+            </div>
+        </div>
+        
+        <script src="popup.js"></script>
+    </body>
+</html>
