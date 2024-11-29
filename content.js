@@ -7,8 +7,7 @@ async function checkAndBlockCurrentVideo() {
         return;
     }
 
-    const { title, description } = getVideoInfo();
-    console.log('BRAWLHALLA BLOCKER: Checking video:', { title, description });
+    const { title, description, duration } = getVideoInfo();
 
     const isBrawlhallaVideo = keywords.some(keyword => 
         title.toLowerCase().includes(keyword.toLowerCase()) || 
@@ -18,14 +17,15 @@ async function checkAndBlockCurrentVideo() {
     console.log('Is Brawlhalla video?', isBrawlhallaVideo);
 
     if (isBrawlhallaVideo) {
+        
         console.log('BRAWLHALLA BLOCKER: Blocking video:', title);
-        logBlockedVideo(title, 'Brawlhalla content detected in video/description');
+        logBlockedVideo(title, 'Brawlhalla content detected in video/description', duration);
         window.location.href = 'https://www.example.com';
         chrome.runtime.sendMessage({ action: 'closeTab' });
     }
 }
 
-function logBlockedVideo(title, reason) {
+function logBlockedVideo(title, reason, duration) {
     if (!title) return;
     
     // Check if chrome.storage is available
@@ -42,6 +42,7 @@ function logBlockedVideo(title, reason) {
             storedVideos.push({ 
                 title, 
                 reason, 
+                duration, 
                 timestamp: new Date().toISOString() 
             });
             
@@ -56,7 +57,7 @@ function logBlockedVideo(title, reason) {
                 // Update the popup if it's open
                 chrome.runtime.sendMessage({ 
                     action: 'updateBlockedList',
-                    video: { title, reason, timestamp: new Date().toISOString() }
+                    video: { title, reason, timestamp: new Date().toISOString(), duration }
                 });
             });
         });
@@ -71,10 +72,22 @@ function isVideoPage() {
 }
 
 function getVideoInfo() {
-    if (!isVideoPage()) return { title: '', description: ''};
+    if (!isVideoPage()) return { title: '', description: '', duration: 0};
     
+
+
     const title = document.querySelector('h1.style-scope.ytd-watch-metadata')?.textContent?.trim() || '';
     
+
+    let duration = 0;
+    const videoElement = document.querySelector("video");
+
+
+    if (videoElement) {
+        // Get the duration in seconds
+        duration = videoElement.duration;
+    }
+
     // Initialize description variable
     let description = '';
     
@@ -96,9 +109,9 @@ function getVideoInfo() {
         console.log("BRAWLHALLA BLOCKER: Description element not found");
     }
     
-    console.log('BRAWLHALLA BLOCKER: Got video info:', { title, description });
+    console.log('BRAWLHALLA BLOCKER: Got video info:', { title, description, duration });
     
-    return { title, description };
+    return { title, description, duration };
 }
 
 // Check when the page loads

@@ -1,3 +1,9 @@
+function formatDuration(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    return `${hours}h ${minutes}m`;
+}
+
 function displayBlockedVideos() {
     const blockedList = document.getElementById('blocked-videos-list');
     
@@ -15,16 +21,22 @@ function displayBlockedVideos() {
         // Sort videos by timestamp, most recent first
         videos.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         
+        let totalSavedTime = 0;
+
         videos.forEach(video => {
             const videoElement = document.createElement('div');
             videoElement.className = 'blocked-video';
             videoElement.innerHTML = `
                 <div class="title">${video.title}</div>
                 <div class="reason">Reason: ${video.reason}</div>
+                <div class="duration">Duration: ${formatDuration(video.duration || 0)}</div>
                 <div class="timestamp">Blocked on: ${new Date(video.timestamp).toLocaleString()}</div>
             `;
             blockedList.appendChild(videoElement);
+            totalSavedTime += video.duration || 0;
         });
+
+        document.getElementById('total-saved-time').textContent = `Total time saved: ${formatDuration(totalSavedTime)}`;
     });
 }
 
@@ -34,6 +46,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         displayBlockedVideos();
     }
 });
+
+// Add this function to reset the total time display
+function resetTotalTime() {
+    document.getElementById('total-saved-time').textContent = 'Total time saved: 0h 0m';
+}
 
 // Initial display when popup opens
 document.addEventListener('DOMContentLoaded', () => {
@@ -53,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     confirmBtn.addEventListener('click', () => {
         chrome.runtime.sendMessage({ action: 'clearLogs' });
         modal.style.display = 'none';
+        resetTotalTime();
     });
     
     // Handle cancel button click

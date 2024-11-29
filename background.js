@@ -10,7 +10,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         console.log('BRAWLHALLA BLOCKER: Clearing blocked videos log');
         chrome.storage.local.set({ blockedVideos: [] }, () => {
             // Notify popup to refresh the display
-            chrome.runtime.sendMessage({ action: 'updateBlockedList' });
+            chrome.runtime.sendMessage({ 
+                action: 'updateBlockedList',
+                cleared: true
+            });
         });
     }
     
